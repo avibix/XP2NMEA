@@ -75,8 +75,6 @@ You can also use GPS Connector to fly on [Aircom](https://aircom24.ru/).
 - **Pronebo 7.4:**
   - Always back up your settings.
   - Disable *Auto-connect to External GPS* to prevent app freezes when data source is unavailable.
-- **Pronebo 7.3:**  
-  - No issues reported.
 
 ## 🛠 Requirements
 
