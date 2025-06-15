@@ -1,3 +1,99 @@
+# X-Plane to NMEA
+
+It's application to stream GPS data from **X-Plane** to navigation apps like [Pronebo](https://t.me/s/pronebo_club) or [GPS Connector](https://play.google.com/store/apps/details?id=de.pilablu.gpsconnector) over your local network.
+
+---
+
+## 📲 Supported Apps
+
+- [Pronebo](https://t.me/s/pronebo_club)
+- [GPS Connector (Android)](https://play.google.com/store/apps/details?id=de.pilablu.gpsconnector)
+
+
+## ✈️ Pronebo Setup
+
+1. Install the [FlyWithLua plugin](https://forums.x-plane.org/index.php?/files/file/38445-flywithlua-ng-next-generation-edition-for-x-plane-11-win-lin-mac/) for X-Plane.
+2. Copy `NMEA.lua` into:
+    ```
+    X:/X-Plane/Resources/Plugins/FlyWithLua/Scripts/
+    ```
+3. Install **Pronebo** on your smartphone.
+4. Launch `XP2NMEA.exe` — your PC's IP address and port will be displayed.
+5. In **ProNebo**, navigate to:
+    ```
+    Settings → GLONASS / GPS Settings → External GPS and baro sensor
+    ```
+   Enter:
+    - **TCP/UDP IP**: your computer’s IP address
+    - **Port**: `10110`
+    - Press **Save**
+
+⚠ **Important (Pronebo 7.4 only):**  
+Disable **Auto-connect to External GPS** — if enabled while no data source is connected, the app may freeze.  
+This issue does not exist in version 7.3.
+
+6. Launch X-Plane and load into an airport.
+7. In **GLONASS / GPS** window:
+    ```
+    Tap 3 dots → Map view → Connect GPS → UDP/TCP GPS
+    ```
+8. Verify that **Pronebo** is connected inside `XP2NMEA.exe`.
+
+## 🛩️ GPS Connector Setup
+
+1. Install the [FlyWithLua plugin](https://forums.x-plane.org/index.php?/files/file/38445-flywithlua-ng-next-generation-edition-for-x-plane-11-win-lin-mac/) for X-Plane.
+2. Copy `NMEA.lua` into:
+    ```
+    X:/X-Plane/Resources/Plugins/FlyWithLua/Scripts/
+    ```
+3. Install [GPS Connector](https://play.google.com/store/apps/details?id=de.pilablu.gpsconnector) on your smartphone.
+4. Launch `XP2NMEA.exe` — your PC's IP address and port will be displayed.
+5. In **GPS Connector**:
+    ```
+    ⚙️ → GNSS Input → Select NMEA input source → TCP/IP
+    ```
+   Enter:
+    - **IP**: your computer’s IP address
+    - **Port**: `10110`
+    - Press **Save**
+6. In **GPS Connector**:
+    ```
+    ⚙️ → Mock location → Set Mock Location ON
+    ```
+7. The app may display:
+    ```
+    "TCP/IP Feature is not Licensed!"
+    ```
+   — Don't worry, the app works normally.
+8. In **Android Developer Options**, set **GPS Connector** as the mock location provider.
+9. Launch X-Plane and load into an airport.
+10. Verify that **GPS Connector** is connected inside `XP2NMEA.exe`.
+
+You can also use GPS Connector to fly on [Aircom](https://aircom24.ru/).
+
+## ⚠ Known Issues
+
+- **Pronebo 7.4:**
+  - Always back up your settings.
+  - Disable *Auto-connect to External GPS* to prevent app freezes when data source is unavailable.
+- **Pronebo 7.3:**  
+  - No issues reported.
+
+## 🛠 Requirements
+
+- **X-Plane 11/12**
+- **FlyWithLua NG plugin**
+- **XP2NMEA.exe**
+- Smartphone with **Pronebo** or **GPS Connector**
+
+---
+
+Enjoy your flights!
+
+
+
+
+
 # Привет!
 
 
@@ -30,3 +126,7 @@
 
 ## Переходные положения
 Программа с аналогичным функционалом для MSFS2020 [*click*](https://github.com/mihai-dinculescu/msfs-2020-gps-link)
+
+
+
+
