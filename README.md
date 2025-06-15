@@ -1,6 +1,6 @@
 # X-Plane to NMEA
 
-It's application to stream GPS data from **X-Plane** to navigation apps like [Pronebo](https://t.me/s/pronebo_club) or [GPS Connector](https://play.google.com/store/apps/details?id=de.pilablu.gpsconnector) over your local network.
+**X-Plane to NMEA** application to stream GPS data from **X-Plane** to navigation apps like [Pronebo](https://t.me/s/pronebo_club) or [GPS Connector](https://play.google.com/store/apps/details?id=de.pilablu.gpsconnector) over your local network.
 
 ---
 
@@ -168,7 +168,7 @@ Enjoy your flights!
   - Сделайте резервную копию настроек.
   - Обязательно отключайте *автоматическое соединение с внешним GPS*, чтобы избежать зависания при отсутствии источника данных.
 
-## ✈️ Также доступно для MSFS2020
+## ✈ Также доступно для MSFS2020
 
 Аналогичное приложение для **Microsoft Flight Simulator 2020** доступно [здесь](https://github.com/mihai-dinculescu/msfs-2020-gps-link).
 
