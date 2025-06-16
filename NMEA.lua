@@ -5,9 +5,12 @@ local Port = defaultPort
 local last_time_sent = 0
 local send_interval = 0.1 -- 10 p/s
 
+
+
 -- Structure to hold current plane situation
 local data = {}
 
+-- DataRefs from X-Plane
 dataref("groundspeed", "sim/flightmodel/position/groundspeed")
 dataref("truetrack", "sim/flightmodel/position/psi")
 dataref("variation", "sim/flightmodel/position/magnetic_variation")
@@ -16,9 +19,9 @@ dataref("altitude", "sim/flightmodel/position/elevation")
 dataref("pitch", "sim/flightmodel/position/theta")
 dataref("roll", "sim/flightmodel/position/phi")
 dataref("zulu_time_sec", "sim/time/zulu_time_sec")
+dataref("vsi", "sim/flightmodel/position/vh_ind_fpm")
 
 
--- create socket
 local socket = require "socket"
 local udp = socket.udp()
 udp:settimeout(0)
@@ -32,13 +35,14 @@ local function isValidNumber(x)
     return x == x and x ~= nil
 end
 
-local function getSimDateTime()
+local function getSimDateTime() -- time from XP
     local now_utc = os.time(os.date("!*t"))
     local midnight = now_utc - (now_utc % 86400)
     local sim_time = midnight + zulu_time_sec
     local t = os.date("!*t", sim_time)
     return t
 end
+
 
 function readData()
     if not (isValidNumber(LATITUDE) and isValidNumber(LONGITUDE)) then
@@ -80,6 +84,7 @@ function readData()
     data.alt_formatted = string.format("%1.1f", data.alt)
 end
 
+
 function composeNMEA()
 
     local now = os.clock()
@@ -88,39 +93,45 @@ function composeNMEA()
 
     readData()
 
-    local GPRMC = string.format("GPRMC,%s,A,%s,%s,%4.1f,%05.1f,%s,%s", 
+    local GLRMC = string.format("GLRMC,%s,A,%s,%s,%4.1f,%05.1f,%s,%s", 
         data.time, data.lat_formatted, data.lon_formatted, data.gs, data.tt, data.date, data.var_formatted)
-    local GPRMC_full = string.format("$%s", GPRMC)
+    local GLRMC_full = string.format("$%s", GLRMC)
 
-    local GPGGA = string.format("GPGGA,%s,%s,%s,1,10,0.9,%s,M,0.0,M,,", 
+    local GLGGA = string.format("GLGGA,%s,%s,%s,1,10,0.9,%s,M,0.0,M,,", 
         data.time, data.lat_formatted, data.lon_formatted, data.alt_formatted)
-    local GPGGA_full = string.format("$%s", GPGGA)
+    local GLGGA_full = string.format("$%s", GLGGA)
 
-    local GPGSA = string.format("GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.2,0.9,1.5")
-    local GPGSA_full = string.format("$%s", GPGSA)
+    local GLGSA = string.format("GLGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.2,0.9,1.5")
+    local GLGSA_full = string.format("$%s", GLGSA)
 
-    local GPGLL = string.format("GPGLL,%s,%s,%s,A", 
+    local GLGLL = string.format("GLGLL,%s,%s,%s,A", 
         data.lat_formatted, data.lon_formatted, data.time)
-    local GPGLL_full = string.format("$%s", GPGLL)
+    local GLGLL_full = string.format("$%s", GLGLL)
 
-    local GPVTG = string.format("GPVTG,%05.1f,T,%05.1f,M,%4.1f,N,%4.1f,K", 
+    local GLVTG = string.format("GLVTG,%05.1f,T,%05.1f,M,%4.1f,N,%4.1f,K", 
         data.tt, data.mt, data.gs, data.gs * 1.852)
-    local GPVTG_full = string.format("$%s", GPVTG)
+    local GLVTG_full = string.format("$%s", GLVTG)
 
-    local GPGSV_1 = "GPGSV,2,1,10,01,80,090,42,02,70,045,40,03,60,180,38,04,50,270,35"
-    local GPGSV_2 = "GPGSV,2,2,10,05,40,315,30,06,30,000,25,07,20,135,20,08,10,225,15,09,05,045,10"
-    local GPGSV_full1 = string.format("$%s", GPGSV_1)
-    local GPGSV_full2 = string.format("$%s", GPGSV_2)
-
-    local PGRMZ = string.format("PGRMZ,%s,f", data.alt_formatted)
-    local PGRMZ_full = string.format("$%s", PGRMZ)
+    local GLGSV_1 = "GLGSV,2,1,10,01,80,090,42,02,70,045,40,03,60,180,38,04,50,270,35"
+    local GLGSV_2 = "GLGSV,2,2,10,05,40,315,30,06,30,000,25,07,20,135,20,08,10,225,15,09,05,045,10"
+    local GLGSV_full1 = string.format("$%s", GLGSV_1)
+    local GLGSV_full2 = string.format("$%s", GLGSV_2)
 
     local GPHDT = string.format("GPHDT,%05.1f,T", data.tt)
     local GPHDT_full = string.format("$%s", GPHDT)
 
-    local NMEA = string.format("%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n", GPRMC_full, GPGGA_full, GPGSA_full, GPGLL_full, GPVTG_full, GPGSV_full1, GPGSV_full2, PGRMZ_full, GPHDT_full)
+    local alt_feet = tonumber(data.alt_formatted) * 3.28084 -- meters to feet
+    local PGRMZ = string.format("PGRMZ,%s,f", data.alt_formatted)
+    local PGRMZ_full = string.format("$%s", PGRMZ)
+
+    local PGRMV = string.format("PGRMV,%1.1f,f", vsi)
+    local PGRMV_full = string.format("$%s", PGRMV)
+
+    local NMEA = string.format("%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n",
+        GLRMC_full, GLGGA_full, GLGSA_full, GLGLL_full, GLVTG_full, GLGSV_full1, GLGSV_full2, PGRMZ_full, GPHDT_full, PGRMV_full)
 
     sendUDP(NMEA)
 end
+
 
 do_every_frame("composeNMEA()")
